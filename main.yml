@@ -1,0 +1,30 @@
+
+
+### Install API ###
+
+# Install Java JRE for App
+---
+- name: JRE Open JDK  # name 
+  apt:
+    name: openjdk-11-jre       # name of package
+    state: present             # package must be present    
+  become: yes                  # Force sudo for Install
+
+- name: Create Directory
+  file:
+    path: "{{ appli_dir }}" 
+    state: directory
+    owner: "{{ owner_user }}"
+    group: "{{ owner_group }}"
+    mode: 0700
+  become: yes
+
+- name: Copy artifact
+  copy:
+    src: movieapi.jar
+    dest: "{{ appli_dir }}"
+
+- name: Copy conf api
+  template:
+    src: application.properties.j2
+    dest: "{{ appli_dir }}/application.properties"
