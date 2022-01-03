@@ -1,0 +1,51 @@
+########################################################
+##                                                    ##
+## Install API                                        ##
+##                                                    ##
+########################################################
+
+---
+
+########################################################
+## Intall Java JRE for App                            ##
+########################################################
+
+- name: JRE Open JDK
+  apt:
+    name: openjdk-11-jre    # name of package
+    state: present          # package must be present    
+  become: yes               # force sudo for install
+
+
+
+########################################################
+## Create directory for preparing the copy of App     ##
+########################################################
+
+- name: Create Directory
+  file:
+    path: "{{ appli_dir }}"        # var in ~/groups_vars/api
+    state: directory               # type : directory
+    owner: "{{ owner_user }}"      # var in ~/vars/main.yml
+    group: "{{ owner_group }}"     # var in ~/vars/main.yml
+    mode: 0700                     # mode for directory
+  become: yes                      # force sudo for install
+
+
+########################################################
+## Copy App in directory create                       ##
+########################################################
+
+- name: Copy artifact
+  copy:
+    src: movieapi.jar           # source, name of App
+    dest: "{{ appli_dir }}"     # destination, var in ~/groups_vars/api
+
+########################################################
+## Copy App configuration properties from templates   ##
+########################################################
+
+- name: Copy conf api
+  template:
+    src: application.properties.j2                  # source, ~templates/application.properties.j2 
+    dest: "{{ appli_dir }}/application.properties"  # destination, var in ~/groups_vars/api
